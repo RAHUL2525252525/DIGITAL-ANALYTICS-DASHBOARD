@@ -23,7 +23,7 @@
 * { 
   margin: 0; padding: 0; box-sizing: border-box; 
   cursor: crosshair; 
-  -webkit-tap-highlight-color: transparent; /* Makes it feel like an APK */
+  -webkit-tap-highlight-color: transparent; 
 }
 
 body {
@@ -31,10 +31,10 @@ body {
   background: var(--bg-pure);
   display: flex;
   height: 100vh;
-  height: 100dvh; /* Dynamic height for mobile browsers */
+  height: 100dvh; /* Adapts to mobile browser address bars */
   width: 100vw;
   overflow: hidden;
-  position: fixed; /* Prevents "pull-to-refresh" glitches on mobile */
+  position: fixed; /* Fixes mobile rubber-banding/scroll-glitch */
 }
 
 /* --- DASHBOARD UI --- */
@@ -48,7 +48,7 @@ body {
   flex-shrink: 0; 
   transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
   z-index: 1001;
-  overflow-y: auto; /* Independent scroll for nav */
+  overflow-y: auto; /* Allows menu itself to scroll if items are added */
 }
 
 .brand-container { margin-bottom: 40px; padding: 15px; border: 3px solid var(--text-main); background: var(--accent-purple-soft); box-shadow: 4px 4px 0px var(--text-main); flex-shrink: 0; }
@@ -74,13 +74,19 @@ body {
   z-index: 10;
 }
 
+/* Scroll Container for Iframe Content */
+.content-area {
+  flex: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch; /* Smooth iOS scroll */
+  background: #fff;
+}
+
 #frame { 
   width: 100%; 
-  flex: 1; 
+  height: 100%; /* Important for internal scroll logic */
   border: none; 
-  background: #fff;
-  /* Smooth scrolling for iframe content on iOS */
-  -webkit-overflow-scrolling: touch; 
+  display: block;
 }
 
 #mobile-toggle { display: none; background: var(--text-main); color: white; border: none; padding: 8px 12px; font-family: 'Syncopate'; font-size: 0.6rem; }
@@ -100,20 +106,9 @@ body {
   overflow: hidden;
 }
 
-.chat-header { 
-    background: #fff; color: var(--text-main); padding: 18px 24px; 
-    display: flex; justify-content: space-between; align-items: center;
-    border-bottom: 1px solid #eee;
-}
-
+.chat-header { background: #fff; color: var(--text-main); padding: 18px 24px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee; }
 .ai-status { display: flex; align-items: center; gap: 10px; }
-.ai-logo-dot {
-    width: 32px; height: 32px;
-    background: var(--accent-purple);
-    border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 14px; font-weight: 700; color: white;
-}
+.ai-logo-dot { width: 32px; height: 32px; background: var(--accent-purple); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; color: white; }
 
 #chat-messages { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 20px; }
 .msg-bubble { padding: 14px 18px; font-size: 14px; line-height: 1.6; max-width: 85%; position: relative; border-radius: 18px; }
@@ -136,7 +131,7 @@ body {
 @media (max-width: 850px) {
   .sidebar { 
     position: absolute; left: 0; top: 0; 
-    height: 100%; width: 85%; max-width: 300px;
+    height: 100%; width: 80%; max-width: 300px;
     transform: translateX(-100%); 
     box-shadow: 20px 0 50px rgba(0,0,0,0.1);
   }
@@ -145,20 +140,12 @@ body {
   #chat-window { 
     width: 100%; height: 100%; 
     bottom: 0; right: 0; 
-    border-radius: 0; /* Full screen chat on mobile like an app */
+    border-radius: 0; 
   }
   
   #mobile-toggle { display: block; }
-  
   .header { padding: 15px 20px; }
-  
-  /* Prevent iframe from causing layout shifts */
-  .main { height: 100%; overflow: hidden; }
 }
-
-/* Scrollbar styling for a cleaner look */
-::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
 </style>
 </head>
 <body>
@@ -179,12 +166,13 @@ body {
 <div class="main">
   <div class="header">
     <button id="mobile-toggle" onclick="toggleMenu()">MENU</button>
-    <h2 id="pageTitle" style="font-size: 1rem; letter-spacing: 1px;">OVERVIEW</h2>
+    <h2 id="pageTitle" style="font-size: 0.9rem; letter-spacing: 1px;">OVERVIEW</h2>
     <div style="font-size:0.6rem;">ID: <span id="username" style="color:var(--accent-purple); font-weight:800;">...</span></div>
   </div>
-  <!-- Use a wrapper for the iframe to ensure scrolling works on all devices -->
-  <div style="flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch;">
-    <iframe id="frame" src="/overview" style="height: 100%; min-height: 100%;"></iframe>
+  
+  <!-- Content area acts as the scroll-container for the iframe -->
+  <div class="content-area">
+    <iframe id="frame" src="/overview"></iframe>
   </div>
 </div>
 
@@ -204,7 +192,7 @@ body {
   <div class="chat-footer">
     <div class="input-container">
       <input type="text" id="chat-input" placeholder="Ask Aether..." onkeypress="handleEnter(event)">
-      <button class="send-btn" onclick="sendMessage()" style="background:none; border:none; color:var(--accent-purple); font-size:20px; margin-left:10px; cursor:pointer;">✦</button>
+      <button onclick="sendMessage()" style="background:none; border:none; color:var(--accent-purple); font-size:20px; margin-left:10px; cursor:pointer;">✦</button>
     </div>
   </div>
 </div>
@@ -212,12 +200,7 @@ body {
 <div id="chat-trigger" onclick="toggleChat()">✦</div>
 
 <script>
-let currentResponse = "";
-let typeIdx = 0;
-let typingTimer = null;
-
 function toggleMenu() { document.getElementById('sidebar').classList.toggle('open'); }
-
 function toggleChat() {
   const win = document.getElementById("chat-window");
   win.style.display = (win.style.display === "flex") ? "none" : "flex";
@@ -240,7 +223,6 @@ async function sendMessage() {
   msgArea.innerHTML += `<div class="msg-bubble user-msg">${msg}</div>`;
   msgArea.scrollTop = msgArea.scrollHeight;
   
-  // Logic remains the same, placeholder for API response
   try {
     const res = await fetch("/api/gemini-chat", {
       method: "POST",
