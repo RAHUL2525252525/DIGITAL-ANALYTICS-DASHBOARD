@@ -1,6 +1,5 @@
 import os
 from dotenv import load_dotenv
-import pandas as pd
 from flask import Flask, render_template, jsonify, request, redirect, url_for, session
 from flask_cors import CORS
 import firebase_admin
@@ -225,36 +224,14 @@ def orders_page():
 # DATA LOADER
 # =========================
 def load_campaign_data():
-    try:
-        campaigns_csv = os.path.join(DATA_DIR, 'campaigns.csv')
-        clicks_csv = os.path.join(DATA_DIR, 'clicks.csv')
-        conversions_csv = os.path.join(DATA_DIR, 'conversions.csv')
-
-        if not all(os.path.exists(f) for f in [campaigns_csv, clicks_csv, conversions_csv]):
-            return pd.DataFrame()
-
-        df1 = pd.read_csv(campaigns_csv)
-        df2 = pd.read_csv(clicks_csv)
-        df3 = pd.read_csv(conversions_csv)
-
-        df = df1.merge(df2, on='campaign_name', how='left')
-        df = df.merge(df3, on='campaign_name', how='left')
-
-        df[['spend', 'clicks', 'conversions']] = df[['spend', 'clicks', 'conversions']].fillna(0)
-        df['revenue'] = df['conversions'] * 45
-
-        return df
-
-    except Exception as e:
-        print(e)
-        return pd.DataFrame()
+    return []
 
 
 @app.route('/api/campaign-stats')
 def campaign_stats():
     df = load_campaign_data()
 
-    if df.empty:
+    if not df:
         return jsonify({"status": "no_data"})
 
     totals = {
