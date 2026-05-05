@@ -20,14 +20,16 @@
   --chat-glass: rgba(255, 255, 255, 0.94);
 }
 * { margin: 0; padding: 0; box-sizing: border-box; cursor: crosshair; }
+
 body {
   font-family: 'Space Grotesk', sans-serif;
   background: var(--bg-pure);
   display: flex;
   height: 100vh;
   width: 100vw;
-  overflow: hidden; /* Keeps the main app structure locked */
+  overflow: hidden; /* Keeps the main app shell from scrolling, allowing internal components to scroll instead */
 }
+
 /* --- DASHBOARD UI --- */
 .sidebar { 
   width: 320px; 
@@ -39,10 +41,12 @@ body {
   flex-shrink: 0; 
   transition: transform 0.3s ease; 
   z-index: 1001;
-  overflow-y: auto; /* Fix: Allows sidebar to scroll if content is long */
+  overflow-y: auto; /* FIXED: Allows the sidebar menu to scroll if it's longer than the screen */
 }
+
 .brand-container { margin-bottom: 40px; padding: 15px; border: 3px solid var(--text-main); background: var(--accent-purple-soft); box-shadow: 4px 4px 0px var(--text-main); flex-shrink: 0; }
 .brand-title { font-family: 'Syncopate', sans-serif; font-size: 0.85rem; font-weight: 700; text-transform: uppercase; }
+
 .nav-link { display: block; padding: 16px; margin-bottom: 12px; text-transform: uppercase; font-weight: 700; font-size: 0.8rem; text-decoration: none; color: var(--text-main); border: 2px solid transparent; cursor: pointer; }
 .nav-link.active { background: var(--accent-purple); color: #fff; border: 2px solid var(--text-main); box-shadow: 4px 4px 0px var(--text-main); }
 
@@ -51,9 +55,10 @@ body {
   display: flex; 
   flex-direction: column; 
   min-width: 0; 
-  position: relative; 
+  position: relative;
   height: 100%;
 }
+
 .header { display: flex; justify-content: space-between; align-items: center; padding: 20px 30px; background: white; border-bottom: var(--border-thick); flex-shrink: 0; }
 #frame { width: 100%; flex: 1; border: none; background: #fff; }
 #mobile-toggle { display: none; background: var(--text-main); color: white; border: none; padding: 8px 12px; font-family: 'Syncopate'; font-size: 0.6rem; }
@@ -120,7 +125,7 @@ body {
   .sidebar { 
     position: absolute; left: 0; top: 0; bottom: 0; 
     transform: translateX(-100%); width: 280px; 
-    height: 100%; /* Ensures it fills the screen height */
+    height: 100vh; /* FIXED: Ensures full height on mobile */
   }
   .sidebar.open { transform: translateX(0); }
   #chat-window { width: 94vw; height: 75vh; right: 3vw; bottom: 90px; }
@@ -129,6 +134,7 @@ body {
 </style>
 </head>
 <body>
+
 <div class="sidebar" id="sidebar">
   <div class="brand-container">
     <h1 class="brand-title">ANALYTICS<br>DASHBOARD</h1>
@@ -163,6 +169,7 @@ body {
     </div>
     <button onclick="toggleChat()" style="background:none; border:none; color:#94a3b8; cursor:pointer; font-size:20px;">✕</button>
   </div>
+  
   <div class="chat-project-card">
     <strong>Project Aether:</strong> Real-time marketing intelligence system.<br>
     <strong>Core Engine:</strong> Sovereign Data Analytics v4.2.<br>
@@ -179,6 +186,7 @@ body {
     </div>
   </div>
 </div>
+
 <div id="chat-trigger" onclick="toggleChat()">✦</div>
 
 <script>
@@ -219,7 +227,7 @@ function streamText() {
             const msgArea = document.getElementById("chat-messages");
             msgArea.scrollTop = msgArea.scrollHeight;
         } else {
-            stopResponse();
+            stopResponse(); 
         }
     }, 20);
 }
@@ -239,6 +247,7 @@ async function sendMessage() {
   aiBubble.className = "msg-bubble ai-msg typing-state";
   msgArea.appendChild(aiBubble);
   msgArea.scrollTop = msgArea.scrollHeight;
+  
   try {
     const res = await fetch("/api/gemini-chat", {
       method: "POST",
@@ -259,7 +268,18 @@ function loadPage(page, e) {
   document.getElementById("frame").src = `/${page}`;
   document.getElementById("pageTitle").innerText = page.toUpperCase();
   document.querySelectorAll(".nav-link").forEach(el => el.classList.remove("active"));
-  if(e.target) e.target.classList.add("active");
+  
+  // Safely handle target highlight
+  if(e && e.target) {
+    e.target.classList.add("active");
+  } else {
+    // Fallback if triggered without event
+    const links = document.querySelectorAll('.nav-link');
+    links.forEach(link => {
+        if(link.innerText.toLowerCase() === page) link.classList.add('active');
+    });
+  }
+  
   if(window.innerWidth <= 850) toggleMenu();
 }
 
