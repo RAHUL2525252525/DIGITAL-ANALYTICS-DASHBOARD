@@ -19,105 +19,83 @@
   --user-bubble: #7C4DFF;
   --chat-glass: rgba(255, 255, 255, 0.94);
 }
-
-* { 
-  margin: 0; padding: 0; box-sizing: border-box; 
-  cursor: crosshair; 
-  -webkit-tap-highlight-color: transparent; 
-}
+* { margin: 0; padding: 0; box-sizing: border-box; cursor: crosshair; -webkit-tap-highlight-color: transparent; }
 
 body {
   font-family: 'Space Grotesk', sans-serif;
   background: var(--bg-pure);
   display: flex;
   height: 100vh;
-  height: 100dvh; /* Adapts to mobile browser address bars */
+  height: 100dvh; /* Fix for mobile address bars */
   width: 100vw;
   overflow: hidden;
-  position: fixed; /* Fixes mobile rubber-banding/scroll-glitch */
+  position: fixed; /* Prevent bouncy scrolling on mobile shells */
 }
 
 /* --- DASHBOARD UI --- */
 .sidebar { 
-  width: 320px; 
-  background: var(--panel-white); 
-  border-right: var(--border-thick); 
-  padding: 30px 20px; 
-  display: flex; 
-  flex-direction: column; 
-  flex-shrink: 0; 
-  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
-  z-index: 1001;
-  overflow-y: auto; /* Allows menu itself to scroll if items are added */
+  width: 320px; background: var(--panel-white); border-right: var(--border-thick); 
+  padding: 30px 20px; display: flex; flex-direction: column; flex-shrink: 0; 
+  transition: transform 0.3s ease; z-index: 1001; overflow-y: auto;
 }
-
 .brand-container { margin-bottom: 40px; padding: 15px; border: 3px solid var(--text-main); background: var(--accent-purple-soft); box-shadow: 4px 4px 0px var(--text-main); flex-shrink: 0; }
 .brand-title { font-family: 'Syncopate', sans-serif; font-size: 0.85rem; font-weight: 700; text-transform: uppercase; }
 
 .nav-link { display: block; padding: 16px; margin-bottom: 12px; text-transform: uppercase; font-weight: 700; font-size: 0.8rem; text-decoration: none; color: var(--text-main); border: 2px solid transparent; cursor: pointer; }
 .nav-link.active { background: var(--accent-purple); color: #fff; border: 2px solid var(--text-main); box-shadow: 4px 4px 0px var(--text-main); }
 
-.main { 
-  flex: 1; 
-  display: flex; 
-  flex-direction: column; 
-  min-width: 0; 
-  position: relative;
-  height: 100%;
-}
+.main { flex: 1; display: flex; flex-direction: column; min-width: 0; position: relative; height: 100%; }
+.header { display: flex; justify-content: space-between; align-items: center; padding: 20px 30px; background: white; border-bottom: var(--border-thick); flex-shrink: 0; }
 
-.header { 
-  display: flex; justify-content: space-between; align-items: center; 
-  padding: 20px 30px; background: white; 
-  border-bottom: var(--border-thick); 
-  flex-shrink: 0; 
-  z-index: 10;
-}
-
-/* Scroll Container for Iframe Content */
-.content-area {
-  flex: 1;
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch; /* Smooth iOS scroll */
-  background: #fff;
-}
-
-#frame { 
-  width: 100%; 
-  height: 100%; /* Important for internal scroll logic */
-  border: none; 
-  display: block;
-}
+/* FIX: Scrollable container for the pages */
+.content-area { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; background: #fff; }
+#frame { width: 100%; height: 100%; border: none; display: block; }
 
 #mobile-toggle { display: none; background: var(--text-main); color: white; border: none; padding: 8px 12px; font-family: 'Syncopate'; font-size: 0.6rem; }
 
-/* --- MODERN CHATBOT --- */
+/* --- MODERN CHATBOT (Original Design Reverted) --- */
 #chat-window {
   width: 420px; height: 650px;
   background: var(--chat-glass);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(0,0,0,0.1);
+  backdrop-filter: blur(12px); border: 1px solid rgba(0,0,0,0.1);
   display: none; flex-direction: column;
   position: fixed; bottom: 100px; right: 30px;
-  box-shadow: 0 20px 50px rgba(0,0,0,0.15);
-  z-index: 2000;
-  border-radius: 24px;
-  overflow: hidden;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.15); z-index: 2000;
+  border-radius: 24px; overflow: hidden;
 }
-
-.chat-header { background: #fff; color: var(--text-main); padding: 18px 24px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee; }
+.chat-header { 
+    background: #fff; color: var(--text-main); padding: 18px 24px; 
+    display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee;
+}
 .ai-status { display: flex; align-items: center; gap: 10px; }
-.ai-logo-dot { width: 32px; height: 32px; background: var(--accent-purple); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; color: white; }
-
+.ai-logo-dot {
+    width: 32px; height: 32px; background: var(--accent-purple);
+    border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    font-size: 14px; font-weight: 700; color: white;
+}
+.chat-project-card {
+  margin: 15px; padding: 15px; background: #fff; border: 1px solid #eee;
+  border-radius: 16px; font-size: 12px; line-height: 1.5;
+  color: #64748b; box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+}
 #chat-messages { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 20px; }
 .msg-bubble { padding: 14px 18px; font-size: 14px; line-height: 1.6; max-width: 85%; position: relative; border-radius: 18px; }
 .user-msg { background: var(--user-bubble); color: white; align-self: flex-end; border-bottom-right-radius: 4px; }
 .ai-msg { background: var(--ai-bubble); color: var(--text-main); align-self: flex-start; border-bottom-left-radius: 4px; border: 1px solid #f1f5f9; }
+.ai-msg ul { margin-left: 15px; margin-top: 8px; }
+.ai-msg li { list-style: disc; margin-bottom: 6px; }
 
 .chat-footer { padding: 15px 20px; background: #fff; border-top: 1px solid #eee; }
 .input-container { background: #f1f5f9; border-radius: 12px; display: flex; align-items: center; padding: 5px 10px; }
 #chat-input { flex: 1; padding: 12px; border: none; background: transparent; outline: none; font-family: inherit; font-size: 14px; }
+.controls-group { display: flex; gap: 8px; }
+.btn-circle {
+    width: 38px; height: 38px; border-radius: 10px; border: none;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; transition: 0.2s; font-size: 18px;
+}
+.stop-btn { background: #e2e8f0; color: #64748b; display: none; }
+.send-btn { background: var(--accent-purple); color: white; }
 
 #chat-trigger {
   position: fixed; bottom: 30px; right: 30px;
@@ -127,24 +105,11 @@ body {
   z-index: 2000; box-shadow: 0 10px 25px rgba(124, 77, 255, 0.4);
 }
 
-/* --- MOBILE SPECIFIC (APK FEEL) --- */
 @media (max-width: 850px) {
-  .sidebar { 
-    position: absolute; left: 0; top: 0; 
-    height: 100%; width: 80%; max-width: 300px;
-    transform: translateX(-100%); 
-    box-shadow: 20px 0 50px rgba(0,0,0,0.1);
-  }
+  .sidebar { position: absolute; left: 0; top: 0; bottom: 0; transform: translateX(-100%); width: 280px; }
   .sidebar.open { transform: translateX(0); }
-  
-  #chat-window { 
-    width: 100%; height: 100%; 
-    bottom: 0; right: 0; 
-    border-radius: 0; 
-  }
-  
+  #chat-window { width: 94vw; height: 75vh; right: 3vw; bottom: 90px; }
   #mobile-toggle { display: block; }
-  .header { padding: 15px 20px; }
 }
 </style>
 </head>
@@ -166,11 +131,9 @@ body {
 <div class="main">
   <div class="header">
     <button id="mobile-toggle" onclick="toggleMenu()">MENU</button>
-    <h2 id="pageTitle" style="font-size: 0.9rem; letter-spacing: 1px;">OVERVIEW</h2>
-    <div style="font-size:0.6rem;">ID: <span id="username" style="color:var(--accent-purple); font-weight:800;">...</span></div>
+    <h2 id="pageTitle">OVERVIEW</h2>
+    <div style="font-size:0.7rem;">ID: <span id="username" style="color:var(--accent-purple); font-weight:800;">...</span></div>
   </div>
-  
-  <!-- Content area acts as the scroll-container for the iframe -->
   <div class="content-area">
     <iframe id="frame" src="/overview"></iframe>
   </div>
@@ -186,24 +149,98 @@ body {
             <div style="font-size: 10px; color: #22c55e;">● Active</div>
         </div>
     </div>
-    <button onclick="toggleChat()" style="background:none; border:none; color:#94a3b8; cursor:pointer; font-size:24px;">✕</button>
+    <button onclick="toggleChat()" style="background:none; border:none; color:#94a3b8; cursor:pointer; font-size:20px;">✕</button>
+  </div>
+  
+  <div class="chat-project-card">
+    <strong>Project Aether:</strong> Real-time marketing intelligence system.<br>
+    <strong>Core Engine:</strong> Sovereign Data Analytics v4.2.<br>
+    <strong>Interface:</strong> Optimized for campaign tracking.
   </div>
   <div id="chat-messages"></div>
   <div class="chat-footer">
     <div class="input-container">
-      <input type="text" id="chat-input" placeholder="Ask Aether..." onkeypress="handleEnter(event)">
-      <button onclick="sendMessage()" style="background:none; border:none; color:var(--accent-purple); font-size:20px; margin-left:10px; cursor:pointer;">✦</button>
+      <input type="text" id="chat-input" placeholder="Ask Aether something..." onkeypress="handleEnter(event)">
+      <div class="controls-group">
+        <button class="btn-circle stop-btn" id="stop-btn" onclick="stopResponse()" title="Stop Generation">■</button>
+        <button class="btn-circle send-btn" id="send-btn" onclick="sendMessage()">✦</button>
+      </div>
     </div>
   </div>
 </div>
-
 <div id="chat-trigger" onclick="toggleChat()">✦</div>
 
 <script>
+let currentResponse = "";
+let typeIdx = 0;
+let typingTimer = null;
+let isGenerating = false;
+
 function toggleMenu() { document.getElementById('sidebar').classList.toggle('open'); }
 function toggleChat() {
   const win = document.getElementById("chat-window");
   win.style.display = (win.style.display === "flex") ? "none" : "flex";
+}
+
+function stopResponse() {
+    clearInterval(typingTimer);
+    isGenerating = false;
+    document.getElementById('stop-btn').style.display = "none";
+    document.getElementById('chat-input').disabled = false;
+    const activeBubble = document.querySelector('.typing-state');
+    if(activeBubble) activeBubble.classList.remove('typing-state');
+}
+
+function formatContent(text) {
+    return text.replace(/^\s*[\*\-]\s*(.*)/gm, '<li>$1</li>')
+               .replace(/(<li>.*<\/li>)/s, '<ul>$1</ul>')
+               .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+}
+
+function streamText() {
+    const aiBubble = document.querySelector('.typing-state');
+    if (!aiBubble) return;
+    typingTimer = setInterval(() => {
+        if (typeIdx < currentResponse.length) {
+            aiBubble.innerHTML = formatContent(currentResponse.substring(0, typeIdx + 1));
+            typeIdx++;
+            const msgArea = document.getElementById("chat-messages");
+            msgArea.scrollTop = msgArea.scrollHeight;
+        } else {
+            stopResponse();
+        }
+    }, 20);
+}
+
+async function sendMessage() {
+  const input = document.getElementById("chat-input");
+  const msg = input.value.trim();
+  if (!msg) return;
+  stopResponse();
+  input.value = "";
+  isGenerating = true;
+  document.getElementById('stop-btn').style.display = "flex";
+  const msgArea = document.getElementById("chat-messages");
+  msgArea.innerHTML += `<div class="msg-bubble user-msg">${msg}</div>`;
+  
+  const aiBubble = document.createElement("div");
+  aiBubble.className = "msg-bubble ai-msg typing-state";
+  msgArea.appendChild(aiBubble);
+  msgArea.scrollTop = msgArea.scrollHeight;
+  try {
+    const res = await fetch("/api/gemini-chat", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ message: msg + " (Short, simple, bullet points if needed.)" })
+    });
+    const data = await res.json();
+    currentResponse = data.reply;
+    typeIdx = 0;
+    streamText();
+  } catch (err) {
+    aiBubble.innerHTML = "Connectivity lost.";
+    stopResponse();
+  }
 }
 
 function loadPage(page, e) {
@@ -212,30 +249,6 @@ function loadPage(page, e) {
   document.querySelectorAll(".nav-link").forEach(el => el.classList.remove("active"));
   if(e && e.target) e.target.classList.add("active");
   if(window.innerWidth <= 850) toggleMenu();
-}
-
-async function sendMessage() {
-  const input = document.getElementById("chat-input");
-  const msg = input.value.trim();
-  if (!msg) return;
-  input.value = "";
-  const msgArea = document.getElementById("chat-messages");
-  msgArea.innerHTML += `<div class="msg-bubble user-msg">${msg}</div>`;
-  msgArea.scrollTop = msgArea.scrollHeight;
-  
-  try {
-    const res = await fetch("/api/gemini-chat", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ message: msg })
-    });
-    const data = await res.json();
-    const aiBubble = document.createElement("div");
-    aiBubble.className = "msg-bubble ai-msg";
-    aiBubble.innerText = data.reply;
-    msgArea.appendChild(aiBubble);
-    msgArea.scrollTop = msgArea.scrollHeight;
-  } catch (err) { console.error(err); }
 }
 
 function handleEnter(e) { if(e.key === 'Enter') sendMessage(); }
