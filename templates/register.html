@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=no">
+    <title>DMA | Create Account</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;500;800&family=Syncopate:wght@700&family=Fira+Code:wght@400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --accent-purple: #BB86FC;
+            --bg-pure: #ffffff;
+            --text-main: #000000;
+            --border-heavy: 4px solid #000000;
+            --shadow-brutal: 10px 10px 0px #000000;
+            --error-bg: #ff3333;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; cursor: crosshair; }
+
+        body {
+            background-color: var(--bg-pure);
+            color: var(--text-main);
+            font-family: 'Space Grotesk', sans-serif;
+            min-height: 100vh;
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        body::before {
+            content: " ";
+            display: block;
+            position: absolute;
+            top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.03) 50%), 
+                        linear-gradient(90deg, rgba(255, 0, 0, 0.01), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.01));
+            z-index: 100;
+            background-size: 100% 4px, 3px 100%;
+            pointer-events: none;
+        }
+
+        .bg-grid {
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            background: 
+                linear-gradient(90deg, rgba(0, 0, 0, 0.03) 1px, transparent 1px) 0 0 / 40px 40px,
+                linear-gradient(rgba(0, 0, 0, 0.03) 1px, transparent 1px) 0 0 / 40px 40px;
+        }
+
+        .bg-glow {
+            position: fixed;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(187, 134, 252, 0.2) 0%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 0;
+            filter: blur(60px);
+            transform: translate(-50%, -50%);
+        }
+
+        .page-wrapper {
+            display: grid;
+            grid-template-columns: 1.1fr 0.9fr; 
+            min-height: 100vh;
+            position: relative;
+            z-index: 1;
+        }
+
+        .brand-panel {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 10%;
+            background: #000;
+            color: #fff;
+            border-right: 8px solid var(--accent-purple);
+        }
+
+        .brand-title {
+            font-family: 'Syncopate', sans-serif;
+            font-size: clamp(2rem, 5vw, 5rem);
+            line-height: 0.9;
+            letter-spacing: -3px;
+        }
+
+        .brand-title span.purple { color: var(--accent-purple); }
+
+        .auth-panel {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .auth-container {
+            background: #fff;
+            padding: 2.5rem 2rem 1.5rem;
+            width: 100%;
+            max-width: 440px; 
+            border: var(--border-heavy);
+            box-shadow: var(--shadow-brutal);
+            position: relative;
+        }
+
+        .container-header {
+            position: absolute;
+            top: 0; left: 0; width: 100%;
+            height: 25px;
+            background: #000;
+            display: flex;
+            align-items: center;
+            padding: 0 12px;
+            gap: 6px;
+        }
+
+        .dot { width: 6px; height: 6px; border-radius: 50%; background: #fff; }
+        .dot.purple { background: var(--accent-purple); }
+
+        h2 { 
+            font-size: 1.8rem; 
+            font-weight: 800; 
+            text-transform: uppercase; 
+            letter-spacing: -2px; 
+            margin-bottom: 1rem;
+        }
+
+        .input-group { 
+            margin-bottom: 0.6rem; 
+            position: relative;
+        } 
+        
+        label { 
+            font-family: 'Fira Code', monospace;
+            font-size: 0.6rem; 
+            margin-bottom: 2px; 
+            display: block;
+            font-weight: 700;
+        }
+
+        input { 
+            width: 100%; 
+            padding: 8px 10px; 
+            padding-right: 40px; 
+            background: #fff; 
+            border: 3px solid #000; 
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 16px; 
+            outline: none; 
+        }
+
+        .toggle-pass {
+            position: absolute;
+            right: 12px;
+            top: 26px; 
+            background: none;
+            border: none;
+            font-size: 14px;
+            cursor: pointer;
+            color: #000;
+            z-index: 5;
+        }
+
+        input:focus { box-shadow: 4px 4px 0px var(--accent-purple); }
+
+        .btn-main { 
+            width: 100%; 
+            padding: 14px; 
+            background: #000; 
+            color: #fff; 
+            border: none; 
+            font-family: 'Syncopate', sans-serif; 
+            font-size: 0.7rem; 
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 0.8rem;
+        }
+
+        .btn-main:hover { background: var(--accent-purple); color: #000; }
+
+        .links { margin-top: 0.8rem; text-align: center; }
+        .links a { font-size: 0.55rem; color: #000; text-transform: uppercase; font-weight: 800; text-decoration: none; border-bottom: 2px solid var(--accent-purple);}
+
+        #terminal-info {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.6rem;
+            color: var(--accent-purple);
+        }
+
+        /* --- MOBILE OPTIMIZATION: NO SCROLL --- */
+        @media (max-width: 1024px) {
+            .page-wrapper { 
+                display: flex;
+                flex-direction: column;
+                height: 100vh;
+                overflow: hidden; 
+            } 
+            .brand-panel { 
+                padding: 1rem; 
+                flex: 0 0 15%; 
+                border-right: none; 
+                border-bottom: 4px solid var(--accent-purple); 
+                justify-content: center;
+                text-align: center;
+            }
+            .brand-title { font-size: 1rem; letter-spacing: -1px; }
+            .brand-title br { display: none; }
+            .brand-title span::before { content: " "; }
+
+            .auth-panel { flex: 1; padding: 0.5rem; align-items: center; }
+
+            .auth-container { 
+                transform: scale(0.8); /* Scaled down because Register has more fields */
+                transform-origin: center;
+                max-width: 350px;
+                padding: 2rem 1.2rem 1rem;
+            }
+            
+            h2 { font-size: 1.4rem; margin-bottom: 0.5rem; }
+            #terminal-info, .bg-glow { display: none; }
+        }
+
+        @media (max-height: 700px) and (max-width: 480px) {
+            .auth-container { transform: scale(0.72); }
+            .brand-panel { flex: 0 0 12%; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="bg-grid"></div>
+    <div class="bg-glow" id="glow"></div>
+
+    <div class="page-wrapper">
+        <div class="brand-panel">
+            <h1 class="brand-title">NEW<br><span class="purple">IDENTITY</span><br>REQUIRED</h1>
+            <div id="terminal-info">> INITIALIZING_REGISTRY<br>> BENGALURU_ZONE</div>
+        </div>
+
+        <div class="auth-panel">
+            <div class="auth-container">
+                <div class="container-header">
+                    <div class="dot"></div>
+                    <div class="dot purple"></div>
+                    <div class="dot"></div>
+                </div>
+                <h2>REGISTER_</h2>
+
+                <div id="regError" class="error-message" style="display:none; background: var(--error-bg); padding: 5px; border: 2px solid #000; font-size: 10px; margin-bottom: 10px;">
+                    > REG_FAILURE: <span id="errorDetails"></span>
+                </div>
+
+                <form id="regForm">
+                    <div class="input-group">
+                        <label>USERNAME</label>
+                        <input type="text" id="username" placeholder="ENTER USERNAME" required>
+                    </div>
+
+                    <div class="input-group">
+                        <label>EMAIL</label>
+                        <input type="email" id="email" placeholder="USER@GMAIL.COM" required>
+                    </div>
+
+                    <div class="input-group">
+                        <label>ENTER NEW PASSWORD</label>
+                        <input type="password" id="password" placeholder="••••••••" required>
+                        <button type="button" class="toggle-pass" onclick="togglePass('password', this)">
+                            <i class="fa-solid fa-eye"></i>
+                        </button>
+                    </div>
+
+                    <div class="input-group">
+                        <label>CONFIRM PASSWORD</label>
+                        <input type="password" id="confirmPassword" placeholder="••••••••" required>
+                        <button type="button" class="toggle-pass" onclick="togglePass('confirmPassword', this)">
+                            <i class="fa-solid fa-eye"></i>
+                        </button>
+                    </div>
+                    
+                    <button type="button" class="btn-main" id="regBtn">
+                        CREATE ACCOUNT <span>&rarr;</span>
+                    </button>
+                </form>
+
+                <div class="links">
+                    <a href="{{ url_for('login_page') }}">Already have an account? Login</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<script type="module">
+    window.togglePass = (id, btn) => {
+        const input = document.getElementById(id);
+        const icon = btn.querySelector('i');
+        if (input.type === 'password') {
+            input.type = 'text';
+            icon.classList.replace('fa-eye', 'fa-eye-slash');
+        } else {
+            input.type = 'password';
+            icon.classList.replace('fa-eye-slash', 'fa-eye');
+        }
+    };
+
+    const glow = document.getElementById('glow');
+    if (window.innerWidth > 768) {
+        document.addEventListener('mousemove', (e) => {
+            requestAnimationFrame(() => {
+                glow.style.left = e.clientX + 'px';
+                glow.style.top = e.clientY + 'px';
+            });
+        });
+    }
+
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getAuth, createUserWithEmailAndPassword, updateProfile } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+    import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyCC3IkeAr0q4D1MU7_K7MODofejVTSfOyc",
+        authDomain: "digital-dashboard-1be1a.firebaseapp.com",
+        projectId: "digital-dashboard-1be1a",
+        storageBucket: "digital-dashboard-1be1a.firebasestorage.app",
+        messagingSenderId: "516289925711",
+        appId: "1:516289925711:web:7eca40582781877b77d03a"
+    };
+    
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    const errorBox = document.getElementById('regError');
+    const errorDetails = document.getElementById('errorDetails');
+
+    document.getElementById('regBtn').onclick = async () => {
+        const user = document.getElementById('username').value.trim();
+        const email = document.getElementById('email').value.trim();
+        const pass = document.getElementById('password').value;
+        const conf = document.getElementById('confirmPassword').value;
+
+        errorBox.style.display = 'none';
+
+        if(pass !== conf) { 
+            errorDetails.innerText = "PASSWORD_MISMATCH"; 
+            errorBox.style.display = 'block'; 
+            return; 
+        }
+
+        try {
+            const { user: firebaseUser } = await createUserWithEmailAndPassword(auth, email, pass);
+            await updateProfile(firebaseUser, { displayName: user });
+            
+            await setDoc(doc(db, "users", firebaseUser.uid), {
+                username: user,
+                email: email,
+                role: "User",
+                status: "Active",
+                createdAt: new Date()
+            });
+            
+            window.location.href = "{{ url_for('login_page') }}";
+        } catch(e) { 
+            errorDetails.innerText = e.code.replace('auth/', '').toUpperCase(); 
+            errorBox.style.display = 'block'; 
+        }
+    };
+</script>
+</body>
+</html>
