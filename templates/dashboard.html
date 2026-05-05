@@ -2,9 +2,11 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
 <title>Aether Analytics | Sovereign</title>
+
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;500;700&family=Syncopate:wght@700&family=Fira+Code:wght@400&display=swap" rel="stylesheet">
+
 <style>
 :root {
   --accent-purple: #7C4DFF;
@@ -13,6 +15,7 @@
   --panel-white: #FFFFFF;
   --text-main: #0F172A;
   --border-thick: 4px solid #0F172A;
+  --danger: #FF5252;
   --shadow-brutalist: 8px 8px 0px #0F172A;
   --ai-bubble: #F8FAFC;
   --user-bubble: #7C4DFF;
@@ -25,155 +28,217 @@ body {
   font-family: 'Space Grotesk', sans-serif;
   background: var(--bg-pure);
   display: flex;
-  height: 100dvh; /* Dynamic viewport height for mobile bars */
+  height: 100vh;
   width: 100vw;
   overflow: hidden;
-  position: fixed;
 }
 
-/* --- DASHBOARD UI --- */
-.sidebar { 
-  width: 320px; background: var(--panel-white); border-right: var(--border-thick); 
-  padding: 30px 20px; display: flex; flex-direction: column; flex-shrink: 0; 
-  transition: transform 0.3s ease; z-index: 1001;
-}
+/* --- DASHBOARD UI (ORIGINAL) --- */
+.sidebar { width: 320px; background: var(--panel-white); border-right: var(--border-thick); padding: 30px 20px; display: flex; flex-direction: column; flex-shrink: 0; transition: transform 0.3s ease; z-index: 1001; }
+.brand-container { margin-bottom: 40px; padding: 15px; border: 3px solid var(--text-main); background: var(--accent-purple-soft); box-shadow: 4px 4px 0px var(--text-main); }
+.brand-title { font-family: 'Syncopate', sans-serif; font-size: 0.85rem; font-weight: 700; text-transform: uppercase; }
+.nav-link { display: block; padding: 16px; margin-bottom: 12px; text-transform: uppercase; font-weight: 700; font-size: 0.8rem; text-decoration: none; color: var(--text-main); border: 2px solid transparent; cursor: pointer; }
+.nav-link.active { background: var(--accent-purple); color: #fff; border: 2px solid var(--text-main); box-shadow: 4px 4px 0px var(--text-main); }
+.main { flex: 1; display: flex; flex-direction: column; min-width: 0; position: relative; }
+.header { display: flex; justify-content: space-between; align-items: center; padding: 20px 30px; background: white; border-bottom: var(--border-thick); }
+#frame { width: 100%; flex: 1; border: none; background: #fff; }
+#mobile-toggle { display: none; background: var(--text-main); color: white; border: none; padding: 8px 12px; font-family: 'Syncopate'; font-size: 0.6rem; }
 
-.main { flex: 1; display: flex; flex-direction: column; min-width: 0; height: 100%; position: relative; }
-
-.header { 
-  display: flex; justify-content: space-between; align-items: center; 
-  padding: 20px 30px; background: white; border-bottom: var(--border-thick); flex-shrink: 0; 
-}
-
-/* THE CRITICAL FIX FOR MOBILE IFRAME SCROLLING */
-.content-area { 
-  flex: 1; 
-  position: relative;
-  overflow-y: auto; 
-  -webkit-overflow-scrolling: touch; /* Forces momentum scrolling on iOS */
-}
-
-#frame { 
-  width: 100%; 
-  height: 100%; 
-  border: none; 
-  display: block;
-  /* Prevent iframe from expanding beyond parent on mobile */
-  min-height: 100%;
-}
-
-/* --- CHATBOT UI (Reverted to Original Logic/Style) --- */
+/* --- MODERN CHATBOT --- */
 #chat-window {
-  width: 420px; height: 600px;
+  width: 420px; height: 650px;
   background: var(--chat-glass);
-  backdrop-filter: blur(12px); border: 1px solid rgba(0,0,0,0.1);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(0,0,0,0.1);
   display: none; flex-direction: column;
   position: fixed; bottom: 100px; right: 30px;
-  box-shadow: 0 20px 50px rgba(0,0,0,0.15); z-index: 2000;
-  border-radius: 24px; overflow: hidden;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.15);
+  z-index: 2000;
+  border-radius: 24px;
+  overflow: hidden;
 }
 
 .chat-header { 
     background: #fff; color: var(--text-main); padding: 18px 24px; 
-    display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee;
+    display: flex; justify-content: space-between; align-items: center;
+    border-bottom: 1px solid #eee;
 }
 
-#chat-messages { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 15px; }
+.ai-status { display: flex; align-items: center; gap: 10px; }
+.ai-logo-dot {
+    width: 32px; height: 32px;
+    background: var(--accent-purple);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; font-weight: 700; color: white;
+}
 
-.msg-bubble { padding: 12px 16px; font-size: 14px; line-height: 1.5; max-width: 80%; border-radius: 18px; }
+.chat-project-card {
+  margin: 15px; padding: 15px;
+  background: #fff; border: 1px solid #eee;
+  border-radius: 16px; font-size: 12px; line-height: 1.5;
+  color: #64748b; box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+}
+
+#chat-messages { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 20px; }
+
+.msg-bubble { padding: 14px 18px; font-size: 14px; line-height: 1.6; max-width: 85%; position: relative; border-radius: 18px; }
 .user-msg { background: var(--user-bubble); color: white; align-self: flex-end; border-bottom-right-radius: 4px; }
-.ai-msg { background: var(--ai-bubble); color: var(--text-main); align-self: flex-start; border-bottom-left-radius: 4px; border: 1px solid #e2e8f0; }
+.ai-msg { background: var(--ai-bubble); color: var(--text-main); align-self: flex-start; border-bottom-left-radius: 4px; border: 1px solid #f1f5f9; }
 
-.chat-footer { padding: 15px; background: #fff; border-top: 1px solid #eee; }
-.input-container { background: #f1f5f9; border-radius: 12px; display: flex; align-items: center; padding: 5px; }
-#chat-input { flex: 1; padding: 10px; border: none; background: transparent; outline: none; }
+.ai-msg ul { margin-left: 15px; margin-top: 8px; }
+.ai-msg li { list-style: disc; margin-bottom: 6px; }
 
-.stop-btn { background: #e2e8f0; color: #64748b; display: none; padding: 8px 12px; border-radius: 8px; border:none; cursor:pointer; margin-right:5px;}
-.send-btn { background: var(--accent-purple); color: white; border: none; padding: 8px 15px; border-radius: 8px; cursor: pointer; }
+.chat-footer { padding: 15px 20px; background: #fff; border-top: 1px solid #eee; }
+.input-container { background: #f1f5f9; border-radius: 12px; display: flex; align-items: center; padding: 5px 10px; }
+#chat-input { flex: 1; padding: 12px; border: none; background: transparent; outline: none; font-family: inherit; font-size: 14px; }
+
+.controls-group { display: flex; gap: 8px; }
+.btn-circle {
+    width: 38px; height: 38px; border-radius: 10px; border: none;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; transition: 0.2s; font-size: 18px;
+}
+.stop-btn { background: #e2e8f0; color: #64748b; display: none; }
+.stop-btn:hover { background: #cbd5e1; }
+.send-btn { background: var(--accent-purple); color: white; }
 
 #chat-trigger {
   position: fixed; bottom: 30px; right: 30px;
-  width: 60px; height: 60px; background: var(--accent-purple);
-  border-radius: 50%; color: white; display: flex;
+  width: 65px; height: 65px; background: var(--accent-purple);
+  border-radius: 20px; color: white; display: flex;
   justify-content: center; align-items: center; cursor: pointer;
-  z-index: 2000; box-shadow: 0 10px 20px rgba(124, 77, 255, 0.3);
+  z-index: 2000; box-shadow: 0 10px 25px rgba(124, 77, 255, 0.4);
 }
 
 @media (max-width: 850px) {
-  .sidebar { position: absolute; left: 0; top: 0; bottom: 0; transform: translateX(-100%); }
+  .sidebar { position: absolute; left: 0; top: 0; bottom: 0; transform: translateX(-100%); width: 280px; }
   .sidebar.open { transform: translateX(0); }
-  #chat-window { width: 90vw; height: 70dvh; right: 5vw; bottom: 90px; }
+  #chat-window { width: 94vw; height: 75vh; right: 3vw; bottom: 90px; }
+  #mobile-toggle { display: block; }
 }
 </style>
 </head>
 <body>
 
 <div class="sidebar" id="sidebar">
-  <div style="margin-bottom: 40px; padding: 15px; border: 3px solid #000;">
-    <h1 style="font-family: 'Syncopate'; font-size: 0.8rem;">ANALYTICS</h1>
+  <div class="brand-container">
+    <h1 class="brand-title">ANALYTICS<br>DASHBOARD</h1>
   </div>
   <nav>
-    <a class="nav-link active" href="#" onclick="loadPage('overview', event)">Overview</a>
-    <a class="nav-link" href="#" onclick="loadPage('campaigns', event)">Campaigns</a>
+    <a class="nav-link active" onclick="loadPage('overview', event)">Overview</a>
+    <a class="nav-link" onclick="loadPage('campaigns', event)">Campaigns</a>
+    <a class="nav-link" onclick="loadPage('products', event)">Products</a>
+    <a class="nav-link" onclick="loadPage('orders', event)">Orders</a>
   </nav>
+  <button class="nav-link" onclick="logout()" style="margin-top:auto; color:var(--danger)">Logout</button>
 </div>
 
 <div class="main">
   <div class="header">
-    <button onclick="document.getElementById('sidebar').classList.toggle('open')" style="padding:5px 10px;">MENU</button>
+    <button id="mobile-toggle" onclick="toggleMenu()">MENU</button>
     <h2 id="pageTitle">OVERVIEW</h2>
-    <div id="username" style="font-weight:bold; color:var(--accent-purple);">...</div>
+    <div style="font-size:0.7rem;">ID: <span id="username" style="color:var(--accent-purple); font-weight:800;">...</span></div>
   </div>
-  <div class="content-area">
-    <iframe id="frame" src="/overview"></iframe>
-  </div>
+  <iframe id="frame" src="/overview"></iframe>
 </div>
 
+<!-- CHATBOT -->
 <div id="chat-window">
   <div class="chat-header">
-    <strong>AI ASSISTANT</strong>
-    <button onclick="toggleChat()" style="background:none; border:none; font-size:1.2rem;">×</button>
+    <div class="ai-status">
+        <div class="ai-logo-dot">A</div>
+        <div>
+            <div style="font-size: 14px; font-weight: 700;">AI-ASSISTANT</div>
+            <div style="font-size: 10px; color: #22c55e;">● Active</div>
+        </div>
+    </div>
+    <button onclick="toggleChat()" style="background:none; border:none; color:#94a3b8; cursor:pointer; font-size:20px;">✕</button>
   </div>
+  
+  <div class="chat-project-card">
+    <strong>Project Aether:</strong> Real-time marketing intelligence system.<br>
+    <strong>Core Engine:</strong> Sovereign Data Analytics v4.2.<br>
+    <strong>Interface:</strong> Optimized for campaign tracking.
+  </div>
+
   <div id="chat-messages"></div>
+
   <div class="chat-footer">
     <div class="input-container">
-      <input type="text" id="chat-input" placeholder="Type..." onkeypress="if(event.key==='Enter') sendMessage()">
-      <button class="stop-btn" id="stop-btn" onclick="stopResponse()">Stop</button>
-      <button class="send-btn" onclick="sendMessage()">Send</button>
+      <input type="text" id="chat-input" placeholder="Ask Aether something..." onkeypress="handleEnter(event)">
+      <div class="controls-group">
+        <button class="btn-circle stop-btn" id="stop-btn" onclick="stopResponse()" title="Stop Generation">■</button>
+        <button class="btn-circle send-btn" id="send-btn" onclick="sendMessage()">✦</button>
+      </div>
     </div>
   </div>
 </div>
-<div id="chat-trigger" onclick="toggleChat()">Chat</div>
+
+<div id="chat-trigger" onclick="toggleChat()">✦</div>
 
 <script>
+let currentResponse = "";
+let typeIdx = 0;
 let typingTimer = null;
 let isGenerating = false;
 
+function toggleMenu() { document.getElementById('sidebar').classList.toggle('open'); }
 function toggleChat() {
-  const chat = document.getElementById("chat-window");
-  chat.style.display = (chat.style.display === "flex") ? "none" : "flex";
+  const win = document.getElementById("chat-window");
+  win.style.display = (win.style.display === "flex") ? "none" : "flex";
 }
 
 function stopResponse() {
     clearInterval(typingTimer);
     isGenerating = false;
     document.getElementById('stop-btn').style.display = "none";
+    document.getElementById('chat-input').disabled = false;
+    
+    // Remove typing cursor class if any
+    const activeBubble = document.querySelector('.typing-state');
+    if(activeBubble) activeBubble.classList.remove('typing-state');
+}
+
+function formatContent(text) {
+    return text.replace(/^\s*[\*\-]\s*(.*)/gm, '<li>$1</li>')
+               .replace(/(<li>.*<\/li>)/s, '<ul>$1</ul>')
+               .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+}
+
+function streamText() {
+    const aiBubble = document.querySelector('.typing-state');
+    if (!aiBubble) return;
+
+    typingTimer = setInterval(() => {
+        if (typeIdx < currentResponse.length) {
+            aiBubble.innerHTML = formatContent(currentResponse.substring(0, typeIdx + 1));
+            typeIdx++;
+            const msgArea = document.getElementById("chat-messages");
+            msgArea.scrollTop = msgArea.scrollHeight;
+        } else {
+            stopResponse(); // Finished naturally
+        }
+    }, 20);
 }
 
 async function sendMessage() {
   const input = document.getElementById("chat-input");
   const msg = input.value.trim();
-  if (!msg || isGenerating) return;
+  if (!msg) return;
+
+  // Stop any previous typing before starting new
+  stopResponse();
 
   input.value = "";
   isGenerating = true;
-  document.getElementById('stop-btn').style.display = "inline-block";
+  document.getElementById('stop-btn').style.display = "flex";
 
   const msgArea = document.getElementById("chat-messages");
   msgArea.innerHTML += `<div class="msg-bubble user-msg">${msg}</div>`;
   
   const aiBubble = document.createElement("div");
-  aiBubble.className = "msg-bubble ai-msg";
+  aiBubble.className = "msg-bubble ai-msg typing-state";
   msgArea.appendChild(aiBubble);
   msgArea.scrollTop = msgArea.scrollHeight;
 
@@ -181,22 +246,14 @@ async function sendMessage() {
     const res = await fetch("/api/gemini-chat", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ message: msg })
+      body: JSON.stringify({ message: msg + " (Short, simple, bullet points if needed.)" })
     });
     const data = await res.json();
-    
-    let i = 0;
-    typingTimer = setInterval(() => {
-      if (i < data.reply.length) {
-        aiBubble.innerText += data.reply.charAt(i);
-        i++;
-        msgArea.scrollTop = msgArea.scrollHeight;
-      } else {
-        stopResponse();
-      }
-    }, 30);
+    currentResponse = data.reply;
+    typeIdx = 0;
+    streamText();
   } catch (err) {
-    aiBubble.innerText = "Error connecting.";
+    aiBubble.innerHTML = "Connectivity lost.";
     stopResponse();
   }
 }
@@ -204,12 +261,17 @@ async function sendMessage() {
 function loadPage(page, e) {
   document.getElementById("frame").src = `/${page}`;
   document.getElementById("pageTitle").innerText = page.toUpperCase();
-  if(window.innerWidth < 850) document.getElementById('sidebar').classList.remove('open');
+  document.querySelectorAll(".nav-link").forEach(el => el.classList.remove("active"));
+  if(e.target) e.target.classList.add("active");
+  if(window.innerWidth <= 850) toggleMenu();
 }
+function handleEnter(e) { if(e.key === 'Enter') sendMessage(); }
+function logout() { window.location.href = "/logout"; }
 
-window.onload = () => {
-  fetch('/check-session').then(r => r.json()).then(d => {
-    if(d.session) document.getElementById("username").innerText = d.session.user_name;
+window.onload = function() {
+  fetch('/check-session').then(res => res.json()).then(data => {
+    if(data.session && data.session.user_name) 
+      document.getElementById("username").innerText = data.session.user_name.toUpperCase();
   });
 };
 </script>
