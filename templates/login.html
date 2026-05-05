@@ -6,6 +6,9 @@
     <title>DMA | Digital Marketing Dashboard</title>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;500;800&family=Syncopate:wght@700&family=Fira+Code:wght@400&display=swap" rel="stylesheet">
     
+    <!-- GSAP Library for Animations -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+
     <style>
         :root {
             --accent-purple: #BB86FC;
@@ -26,6 +29,11 @@
             overflow-x: hidden;
             display: flex;
             flex-direction: column;
+        }
+
+        /* Prevent flash of unstyled content during animation */
+        .brand-title, .brand-panel #terminal-info, .auth-container, .input-group, .btn-main, .google-btn, .links {
+            opacity: 0;
         }
 
         body::before {
@@ -217,34 +225,33 @@
             color: var(--accent-purple);
         }
 
-        /* --- MOBILE OPTIMIZATION: FULL VIEW WITHOUT SCROLLING --- */
         @media (max-width: 1024px) { 
             .page-wrapper { 
                 display: flex;
                 flex-direction: column;
-                height: 100vh; /* Lock height */
-                overflow: hidden; /* Prevent body scroll */
+                height: 100vh; 
+                overflow: hidden; 
             } 
             .brand-panel { 
                 padding: 1rem;
-                flex: 0 0 20%; /* Take only 20% height */
+                flex: 0 0 20%; 
                 border-right: none;
                 border-bottom: 4px solid var(--accent-purple);
                 text-align: center;
                 justify-content: center;
             } 
             .brand-title { font-size: 1.2rem; letter-spacing: -1px; }
-            .brand-title br { display: none; } /* Flatten title to save vertical space */
+            .brand-title br { display: none; } 
             .brand-title span::before { content: " "; }
 
             .auth-panel { 
-                flex: 1; /* Take remaining space */
+                flex: 1; 
                 padding: 0.5rem;
                 align-items: center;
             }
 
             .auth-container { 
-                transform: scale(0.85); /* "Zoom out" effect */
+                transform: scale(0.85); 
                 transform-origin: center;
                 margin: 0;
                 padding: 2.5rem 1.5rem 1.5rem 1.5rem;
@@ -253,14 +260,13 @@
             }
 
             h2 { font-size: 1.5rem; margin-bottom: 0.5rem; }
-            #terminal-info { display: none; } /* Hide to save space */
+            #terminal-info { display: none; } 
             .bg-glow { display: none; }
         }
 
-        /* Extreme small screen height fix */
         @media (max-height: 600px) and (max-width: 480px) {
             .auth-container { transform: scale(0.75); }
-            .brand-panel { display: none; } /* Hide brand if screen is too short */
+            .brand-panel { display: none; } 
         }
     </style>
 </head>
@@ -322,8 +328,39 @@
         </div>
     </div>
 
+    <!-- Entrance Animations Script -->
+    <script>
+        window.addEventListener('DOMContentLoaded', () => {
+            const tl = gsap.timeline({ defaults: { ease: "power4.out" } });
+
+            tl.to(".brand-title", { 
+                opacity: 1, 
+                x: 0, 
+                duration: 1.4, 
+                startAt: { x: -60, opacity: 0 } 
+            })
+            .to("#terminal-info", { 
+                opacity: 1, 
+                duration: 0.8 
+            }, "-=0.8")
+            .to(".auth-container", { 
+                opacity: 1, 
+                y: 0, 
+                duration: 1, 
+                startAt: { y: 40, opacity: 0 },
+                ease: "expo.out"
+            }, "-=0.6")
+            .to(".input-group, .btn-main, .google-btn, .links", {
+                opacity: 1,
+                y: 0,
+                stagger: 0.1,
+                duration: 0.8,
+                startAt: { y: 20, opacity: 0 }
+            }, "-=0.4");
+        });
+    </script>
+
     <script type="module">
-        // Logic preserved exactly as requested
         const glow = document.getElementById('glow');
         if (window.innerWidth > 768) {
             document.addEventListener('mousemove', (e) => {
