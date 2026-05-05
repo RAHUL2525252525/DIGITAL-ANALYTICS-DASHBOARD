@@ -2,4 +2,5 @@ product_name,price,sales,campaign
 Phone,10000,20,Campaign A
 Laptop,50000,10,Campaign B
 motorola,24000,70,Campaign C
-nothing,28000,12,campaign D
+nothing,28000,12,Campaign D
+vivo,21000,34,Campaign E
